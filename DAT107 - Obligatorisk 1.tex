@@ -149,12 +149,49 @@ En alternativ måte kunne vært å registrere et "Dummy-kjøretøy" med
 registreringsnummer 'UKJENT'.
 
 \subsection{\textbf{e)} List all informasjon}
+Her bruker vi \texttt{LEFT JOIN} for å sikre at passeringer uten
+bilreferanse inkluderes.
+
+\begin{lstlisting}[language=SQL]
+    SELECT p.*, k.registreringsnummer, e.navn, e.epost
+    FROM bompassering p
+    LEFT JOIN kjoretoy k ON p.kjoretoyid = k.id
+    LEFT JOIN kjoretoy_eier ke ON k.id = ke.kjoretoyid
+    LEFT JOIN eier e ON ke.eierid = e.id;
+\end{lstlisting}
+
 \subsection{\textbf{f)} List all informasjon der det er registrert registreringsnummer}
+Her bruker vi \texttt{INNER JOIN},
+som ekskluderer rader hvor det ikke er match (dvs. uleselige skilt).
+\begin{lstlisting}[language=SQL]
+    SELECT p.*, k.registreringsnummer, e.navn, e.epost
+    FROM bompassering p
+    JOIN kjoretoy k ON p.kjoretoyid = k.id
+    JOIN kjoretoy_eier ke ON k.id = ke.kjoretoyid
+    JOIN eier e ON ke.eierid = e.id;
+\end{lstlisting}
+
 \subsection{\textbf{g)} Nå med relasjonsalgebra}
+Dette uttrykkes ved projeksjon ($\pi$) og naturlig join ($\bowtie$):
+$$\pi_{p.*, k.regnr, e.navn, e.epost} (bompassering \bowtie kjoretoy \bowtie kjoretoy\_eier \bowtie eier)$$
+
 \subsection{\textbf{h)} Vis antall passeringer på ulike registreringsnummer}
+\begin{lstlisting}[language=SQL]
+    SELECT k.registreringsnummer, COUNT(p.id) AS antall_passeringer
+    FROM kjoretoy k
+    JOIN bompassering p ON k.id = p.kjoretoyid
+    GROUP BY k.registreringsnummer;
+\end{lstlisting}
+
 \subsection{\textbf{i)} Vis siste passering med registreringsnummer AA100000}
+
+
 \subsection{\textbf{j)} Vis antall passeringer uten registreringsnummer}
+
+
 \subsection{\textbf{k)} Kan vi håndtere utenlandske registreringsnummer?}
+
+
 \subsection{\textbf{l)} Oppgaven ønsker egentlig 2 tabeller, hvilke andre ønsker vi?}
 
 	
