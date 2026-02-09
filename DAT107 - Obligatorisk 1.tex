@@ -48,65 +48,105 @@ For å oppfylle kravene oppgitt i oppgaven om å lagre informasjon om bilene og 
 Vi oppretter tabellen \textbf{eier} for å lagre informasjon om eierne, inkludert navn, adresse, telefonnummer og e-postadresse. Hver eier får en unik ID som primærnøkkel.
 
 \begin{lstlisting}[language=SQL]
-CREATE TABLE IF NOT EXISTS eier (
-    id SERIAL PRIMARY KEY,
-    navn VARCHAR(255) NOT NULL,
-    adresse VARCHAR(255) NOT NULL,
-    telefon VARCHAR(20),
-    epost VARCHAR(255)
-);
+    CREATE TABLE IF NOT EXISTS eier (
+        id SERIAL PRIMARY KEY,
+        navn VARCHAR(255) NOT NULL,
+        adresse VARCHAR(255) NOT NULL,
+        telefon VARCHAR(20),
+        epost VARCHAR(255)
+    );
 \end{lstlisting}
 
 \subsubsection{Kjøretøy}
 Deretter oppretter vi tabellen \textbf{kjoretoy} for å lagre informasjon om kjøretøyene, som for eksempel registreringsnummer. Hver kjøretøy får en unik ID som primærnøkkel. Tanken med denne tabellen er å kunne lagre flere kjøretøy for hver eier, og dermed håndtere situasjoner der en eier har flere biler.
 
 \begin{lstlisting}[language=SQL]
-CREATE TABLE IF NOT EXISTS kjoretoy (
-    id SERIAL PRIMARY KEY,
-    registreringsnummer VARCHAR(20) UNIQUE NOT NULL
-);
+    CREATE TABLE IF NOT EXISTS kjoretoy (
+        id SERIAL PRIMARY KEY,
+        registreringsnummer VARCHAR(20) UNIQUE NOT NULL
+    );
 \end{lstlisting}
 
 \subsubsection{Kjøretøy eier}
 \textbf{kjoretoy\_eier} tabellen bruker vi som en mellomtabell for å hondtere forholdet mellom kjøretøy og eiere, vi tenkte at en eier kan ha flere kjøretøy.
 \begin{lstlisting}[language=SQL]
-CREATE TABLE IF NOT EXISTS kjoretoy_eier (
-    kjoretoyid INTEGER,
-    eierid INTEGER,
-    FOREIGN KEY (kjoretoyid) REFERENCES kjoretoy(id),
-    FOREIGN KEY (eierid) REFERENCES eier(id)
-);
+    CREATE TABLE IF NOT EXISTS kjoretoy_eier (
+        kjoretoyid INTEGER,
+        eierid INTEGER,
+        FOREIGN KEY (kjoretoyid) REFERENCES kjoretoy(id),
+        FOREIGN KEY (eierid) REFERENCES eier(id)
+    );
 \end{lstlisting}
 
 \subsubsection{Bompassering}
 I \textbf{bompassering} tabellen lagrer vi informasjon om hver passering, inkludert tidspunktet for passeringen, kjøretøyets ID og bomstasjonens ID. Vi bruker fremmednøkler for å referere til kjøretøy og bomstasjoner.
 \begin{lstlisting}[language=SQL]
-CREATE TABLE IF NOT EXISTS bompassering (
-    id SERIAL PRIMARY KEY,
-    passeringstid TIMESTAMP NOT NULL
+    CREATE TABLE IF NOT EXISTS bompassering (
+        id SERIAL PRIMARY KEY,
+        passeringstid TIMESTAMP NOT NULL
 
-    kjoretoyid INTEGER,
-    bomstasjonid INTEGER,
-    FOREIGN KEY (kjoretoyid) REFERENCES kjoretoy(id),
-    FOREIGN KEY (bomstasjonid) REFERENCES bomstasjon(id),
-);
+        kjoretoyid INTEGER,
+        bomstasjonid INTEGER,
+        FOREIGN KEY (kjoretoyid) REFERENCES kjoretoy(id),
+        FOREIGN KEY (bomstasjonid) REFERENCES bomstasjon(id),
+    );
 \end{lstlisting}
 
 \subsubsection{Bomstasjon}
 \textbf{bomstasjon} tabellen lagrer informasjon om bomstasjonene, inkludert navn og plassering.
 \begin{lstlisting}[language=SQL]
-CREATE TABLE IF NOT EXISTS bomstasjon (
-    id SERIAL PRIMARY KEY,
-    navn VARCHAR(255) NOT NULL,
-    plassering VARCHAR(255) NOT NULL
-);
+    CREATE TABLE IF NOT EXISTS bomstasjon (
+        id SERIAL PRIMARY KEY,
+        navn VARCHAR(255) NOT NULL,
+        plassering VARCHAR(255) NOT NULL
+    );
 \end{lstlisting}
 
 \subsection{\textbf{b)} Legge inn test data}
+Vi legger inn data for å teste ulike scenarier,
+inkludert biler med og uten eier, og passeringer uten skilt.
 
-\subsection{\textbf{c)} Dropp telefonnummer} Hvis det ikke er behov å lagre telefonnummeret i eier tabellen, så er det mulig å fjerne det på denne måten. 
+\begin{lstlisting}[language=SQL]
+    INSERT INTO eier
+        (navn, adresse, telefon, epost)
+    VALUES
+        (`Ola Nordmann`, `Osloveien 1`, `90000000`, `ola@test.no`),
+        (`Kari Posten`, `Bergenstorget 2`, `40000000`, `kari@test.no`);
+
+    INSERT INTO kjoretoy 
+        (registreringsnummer)
+    VALUES
+        (`AA10000`),
+        (`BT20000`),
+        (NULL);
+
+    INSERT INTO bomstasjon
+        (navn, plassering)
+    VALUES
+        (`Hovedveien 1`, `Oslo`),
+        (`Fjordkryssing`, `Bergen`);
+
+    INSERT INTO bompassering
+        (passeringstid, kjoretoyid, bomstasjonid)
+    VALUES
+        (CURRENT_TIMESTAMP, 1, 1),
+        (CURRENT_TIMESTAMP, NULL, 2);
+\end{lstlisting}
+
+\subsection{\textbf{c)} Dropp telefonnummer}
+Hvis det ikke er behov å lagre telefonnummeret i eier tabellen,
+så er det mulig å fjerne det på denne måten. 
+\begin{lstlisting}[language=SQL]
+    ALTER TABLE eier DROP COLUMN telefon;
+\end{lstlisting}
 
 \subsection{\textbf{d)} Håndtere passering med manglende skilt}
+I vår løsning håndteres dette ved at feltet \texttt{kjoretoyid}
+i tabellen \texttt{bompassering} tillater \texttt{NULL}-verdier.
+Når et skilt ikke kan leses, registreres passeringen med tid og sted,
+men uten referanse til et kjøretøy.
+En alternativ måte kunne vært å registrere et "Dummy-kjøretøy" med
+registreringsnummer 'UKJENT'.
 
 \subsection{\textbf{e)} List all informasjon}
 \subsection{\textbf{f)} List all informasjon der det er registrert registreringsnummer}
@@ -117,8 +157,5 @@ CREATE TABLE IF NOT EXISTS bomstasjon (
 \subsection{\textbf{k)} Kan vi håndtere utenlandske registreringsnummer?}
 \subsection{\textbf{l)} Oppgaven ønsker egentlig 2 tabeller, hvilke andre ønsker vi?}
 
-\begin{lstlisting}[language=SQL]
-ALTER TABLE eier DROP COLUMN telefon;
-\end{lstlisting}
 	
 \end{document}
