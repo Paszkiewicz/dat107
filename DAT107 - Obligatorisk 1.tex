@@ -184,15 +184,38 @@ $$\pi_{p.*, k.regnr, e.navn, e.epost} (bompassering \bowtie kjoretoy \bowtie kjo
 \end{lstlisting}
 
 \subsection{\textbf{i)} Vis siste passering med registreringsnummer AA100000}
-
+\begin{lstlisting}[language=SQL]
+    SELECT MAX(passeringstid) 
+    FROM bompassering p
+    JOIN kjoretoy k ON p.kjoretoyid = k.id
+    WHERE k.registreringsnummer = `AA10000`;
+\end{lstlisting}
 
 \subsection{\textbf{j)} Vis antall passeringer uten registreringsnummer}
+\begin{lstlisting}
+    SELECT COUNT(*) 
+    FROM bompassering 
+    WHERE kjoretoyid IS NULL;
+\end{lstlisting}
+    
+\subsection{k) Utenlandske registreringsnummer}
+Løsningen kan håndtere disse så lenge \texttt{VARCHAR}-feltet
+for registreringsnummer er fleksibelt nok.
+En utfordring er manglende tilgang til utenlandske eierregistre,
+som gjør fakturering vanskelig.
 
+\subsection{l) Andre nyttige tabeller}
+Selv om oppgaven nevner to tabeller,
+har vi inkludert \textbf{bomstasjon} for å unngå å lagre tekstnavn repetitivt.
+En tabell for \textbf{faktura} eller \textbf{prisgrupper}
+(takster basert på tid/kjøretøytype) ville også vært nyttig i et reelt system).
 
-\subsection{\textbf{k)} Kan vi håndtere utenlandske registreringsnummer?}
-
-
-\subsection{\textbf{l)} Oppgaven ønsker egentlig 2 tabeller, hvilke andre ønsker vi?}
-
-	
+\section{Diskusjon}
+Gjennom denne oppgaven har vi etablert en normalisert databasestruktur
+som ivaretar sporbarhet for bompasseringer.
+Valget om å bruke en mellomtabell (\texttt{kjoretoy\_eier})
+gjør at systemet støtter at en bil kan ha flere eiere over tid,
+eller at en eier har flere biler.
+Ved bruk av \texttt{LEFT JOIN} har vi sikret at også "tapte" inntekter
+(uleselige skilt) kan loggføres og analyseres.
 \end{document}
