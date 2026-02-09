@@ -192,7 +192,7 @@ $$\pi_{p.*, k.regnr, e.navn, e.epost} (bompassering \bowtie kjoretoy \bowtie kjo
 \end{lstlisting}
 
 \subsection{\textbf{j)} Vis antall passeringer uten registreringsnummer}
-\begin{lstlisting}
+\begin{lstlisting}[language=SQL]
     SELECT COUNT(*) 
     FROM bompassering 
     WHERE kjoretoyid IS NULL;
