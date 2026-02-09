@@ -39,6 +39,29 @@
 
 \tableofcontents
 
+\section{Introduksjon}
+Denne oppgaven omhandler utvikling av en databaseløsning
+for registrering av bompasseringer.
+Formålet er å kunne lagre informasjon om biler, deres eiere,
+samt detaljer om hver enkelt passering ved en bomstasjon.
+Vi skal løse spesifikke krav knyttet til datadefinisjon (DDL),
+datamanipulering (DML) og uthenting av statistikk.
+
+\section{Metode}
+For å løse oppgaven har vi valgt en relasjonsdatabasedesign.
+Vi har vurdert normalisering for å unngå dataduplisering,
+spesielt med tanke på forholdet mellom eiere og kjøretøy.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|p{5cm}|p{5cm}|}
+\hline
+\textbf{Valg} & \textbf{Fordel} & \textbf{Ulempe} \\ \hline
+Flere tabeller & Bedre dataintegritet og mindre redundans. & Mer komplekse spørringer (JOINs). \\ \hline
+Bruk av NULL & Håndterer manglende skiltlesing. & Krever bevisst bruk av Outer Joins i spørringer. \\ \hline
+\end{tabular}
+\caption{Metodevalg og vurderinger.}
+\end{table}
 		
 \section{Oppgaven}
 \subsection{\textbf{a)} Opprette tabeller}
