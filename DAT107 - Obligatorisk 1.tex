@@ -1,0 +1,107 @@
+\documentclass{article}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{color}
+
+\usepackage{parskip}
+
+\usepackage[utf8]{inputenc}
+\usepackage[norsk]{babel}
+\usepackage[T1]{fontenc}
+
+\definecolor{codegreen}{rgb}{0,0.1,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codeblue}{HTML}{3875d6}
+\definecolor{backcolour}{HTML}{F2F2F2}
+\definecolor{bookColor}{cmyk}{0,0,0,0.90}  
+\color{bookColor}
+
+\lstset{upquote=true}
+
+\lstdefinestyle{mystyle}{  
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{codeblue},
+	stringstyle=\color{codepurple},
+	basicstyle=\footnotesize\ttfamily,
+	breakatwhitespace=false,
+	breaklines=true,
+	captionpos=b,
+	keepspaces=true,
+	numbersep=10pt,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+}
+\lstset{style=mystyle}
+
+\begin{document}
+	
+		
+\section*{Oppgave}
+\textbf{a)} For å oppfylle kravene oppgitt i oppgaven om å lagre informasjon om bilene og eierne, ble det vurdert å lage 5 tabeller. Nedenfor er SQL-koden for å opprette tabellene med forklaring.
+
+Vi oppretter tabellen \textbf{eier} for å lagre informasjon om eierne, inkludert navn, adresse, telefonnummer og e-postadresse. Hver eier får en unik ID som primærnøkkel.
+
+\begin{lstlisting}[language=SQL]
+CREATE TABLE IF NOT EXISTS eier (
+    id SERIAL PRIMARY KEY,
+    navn VARCHAR(255) NOT NULL,
+    adresse VARCHAR(255) NOT NULL,
+    telefon VARCHAR(20),
+    epost VARCHAR(255)
+);
+\end{lstlisting}
+
+Deretter oppretter vi tabellen \textbf{kjoretoy} for å lagre informasjon om kjøretøyene, som for eksempel registreringsnummer. Hver kjøretøy får en unik ID som primærnøkkel. Tanken med denne tabellen er å kunne lagre flere kjøretøy for hver eier, og dermed håndtere situasjoner der en eier har flere biler.
+
+\begin{lstlisting}[language=SQL]
+CREATE TABLE IF NOT EXISTS kjoretoy (
+    id SERIAL PRIMARY KEY,
+    registreringsnummer VARCHAR(20) UNIQUE NOT NULL
+);
+\end{lstlisting}
+
+\textbf{kjoretoy\_eier} tabellen bruker vi som en mellomtabell for å hondtere forholdet mellom kjøretøy og eiere, vi tenkte at en eier kan ha flere kjøretøy.
+\begin{lstlisting}[language=SQL]
+CREATE TABLE IF NOT EXISTS kjoretoy_eier (
+    kjoretoyid INTEGER,
+    eierid INTEGER,
+    FOREIGN KEY (kjoretoyid) REFERENCES kjoretoy(id),
+    FOREIGN KEY (eierid) REFERENCES eier(id)
+);
+\end{lstlisting}
+
+
+I \textbf{bompassering} tabellen lagrer vi informasjon om hver passering, inkludert tidspunktet for passeringen, kjøretøyets ID og bomstasjonens ID. Vi bruker fremmednøkler for å referere til kjøretøy og bomstasjoner.
+\begin{lstlisting}[language=SQL]
+CREATE TABLE IF NOT EXISTS bompassering (
+    id SERIAL PRIMARY KEY,
+    passeringstid TIMESTAMP NOT NULL
+
+    kjoretoyid INTEGER,
+    bomstasjonid INTEGER,
+    FOREIGN KEY (kjoretoyid) REFERENCES kjoretoy(id),
+    FOREIGN KEY (bomstasjonid) REFERENCES bomstasjon(id),
+);
+\end{lstlisting}
+
+\textbf{bomstasjon} tabellen lagrer informasjon om bomstasjonene, inkludert navn og plassering.
+\begin{lstlisting}[language=SQL]
+CREATE TABLE IF NOT EXISTS bomstasjon (
+    id SERIAL PRIMARY KEY,
+    navn VARCHAR(255) NOT NULL,
+    plassering VARCHAR(255) NOT NULL
+);
+\end{lstlisting}
+
+
+\textbf{c)} Hvis det ikke er behov å lagre telefonnummeret i eier tabellen, så er det mulig å fjerne det på denne måten. 
+
+
+
+\begin{lstlisting}[language=SQL]
+ALTER TABLE eier DROP COLUMN telefon;
+\end{lstlisting}
+	
+\end{document}
