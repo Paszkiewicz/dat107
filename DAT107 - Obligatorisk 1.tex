@@ -36,11 +36,15 @@
 \lstset{style=mystyle}
 
 \begin{document}
-	
-		
-\section*{Oppgave}
-\textbf{a)} For å oppfylle kravene oppgitt i oppgaven om å lagre informasjon om bilene og eierne, ble det vurdert å lage 5 tabeller. Nedenfor er SQL-koden for å opprette tabellene med forklaring.
 
+\tableofcontents
+
+		
+\section{Oppgaven}
+\subsection{\textbf{a)} Opprette tabeller}
+For å oppfylle kravene oppgitt i oppgaven om å lagre informasjon om bilene og eierne, ble det vurdert å lage 5 tabeller. Nedenfor er SQL-koden for å opprette tabellene med forklaring.
+
+\subsubsection{Eier}
 Vi oppretter tabellen \textbf{eier} for å lagre informasjon om eierne, inkludert navn, adresse, telefonnummer og e-postadresse. Hver eier får en unik ID som primærnøkkel.
 
 \begin{lstlisting}[language=SQL]
@@ -53,6 +57,7 @@ CREATE TABLE IF NOT EXISTS eier (
 );
 \end{lstlisting}
 
+\subsubsection{Kjøretøy}
 Deretter oppretter vi tabellen \textbf{kjoretoy} for å lagre informasjon om kjøretøyene, som for eksempel registreringsnummer. Hver kjøretøy får en unik ID som primærnøkkel. Tanken med denne tabellen er å kunne lagre flere kjøretøy for hver eier, og dermed håndtere situasjoner der en eier har flere biler.
 
 \begin{lstlisting}[language=SQL]
@@ -62,6 +67,7 @@ CREATE TABLE IF NOT EXISTS kjoretoy (
 );
 \end{lstlisting}
 
+\subsubsection{Kjøretøy eier}
 \textbf{kjoretoy\_eier} tabellen bruker vi som en mellomtabell for å hondtere forholdet mellom kjøretøy og eiere, vi tenkte at en eier kan ha flere kjøretøy.
 \begin{lstlisting}[language=SQL]
 CREATE TABLE IF NOT EXISTS kjoretoy_eier (
@@ -72,7 +78,7 @@ CREATE TABLE IF NOT EXISTS kjoretoy_eier (
 );
 \end{lstlisting}
 
-
+\subsubsection{Bompassering}
 I \textbf{bompassering} tabellen lagrer vi informasjon om hver passering, inkludert tidspunktet for passeringen, kjøretøyets ID og bomstasjonens ID. Vi bruker fremmednøkler for å referere til kjøretøy og bomstasjoner.
 \begin{lstlisting}[language=SQL]
 CREATE TABLE IF NOT EXISTS bompassering (
@@ -86,6 +92,7 @@ CREATE TABLE IF NOT EXISTS bompassering (
 );
 \end{lstlisting}
 
+\subsubsection{Bomstasjon}
 \textbf{bomstasjon} tabellen lagrer informasjon om bomstasjonene, inkludert navn og plassering.
 \begin{lstlisting}[language=SQL]
 CREATE TABLE IF NOT EXISTS bomstasjon (
@@ -95,10 +102,20 @@ CREATE TABLE IF NOT EXISTS bomstasjon (
 );
 \end{lstlisting}
 
+\subsection{\textbf{b)} Legge inn test data}
 
-\textbf{c)} Hvis det ikke er behov å lagre telefonnummeret i eier tabellen, så er det mulig å fjerne det på denne måten. 
+\subsection{\textbf{c)} Dropp telefonnummer} Hvis det ikke er behov å lagre telefonnummeret i eier tabellen, så er det mulig å fjerne det på denne måten. 
 
+\subsection{\textbf{d)} Håndtere passering med manglende skilt}
 
+\subsection{\textbf{e)} List all informasjon}
+\subsection{\textbf{f)} List all informasjon der det er registrert registreringsnummer}
+\subsection{\textbf{g)} Nå med relasjonsalgebra}
+\subsection{\textbf{h)} Vis antall passeringer på ulike registreringsnummer}
+\subsection{\textbf{i)} Vis siste passering med registreringsnummer AA100000}
+\subsection{\textbf{j)} Vis antall passeringer uten registreringsnummer}
+\subsection{\textbf{k)} Kan vi håndtere utenlandske registreringsnummer?}
+\subsection{\textbf{l)} Oppgaven ønsker egentlig 2 tabeller, hvilke andre ønsker vi?}
 
 \begin{lstlisting}[language=SQL]
 ALTER TABLE eier DROP COLUMN telefon;
